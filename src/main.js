@@ -18,5 +18,8 @@ const app = createApp(App);
 app.component('base-modal', BaseModal);
 // register router to vue app
 app.use(router);
-
-app.mount('#app');
+// avoid initial animation in router
+// only starts when switch routes
+router.isReady().then(function() {
+  app.mount('#app');
+});
