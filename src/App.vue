@@ -1,55 +1,17 @@
 <template>
-  <div class="container">
-    <user-list></user-list>
-  </div>
-  <div class="container">
-    <!-- animate class will be added whenever animatedBlock is true -->
-    <div class="block" :class="{ animate: animatedBlock }"></div>
-    <button @click="animateBlock">Animate</button>
-  </div>
-  <div class="container">
-    <!-- transition events are emitted when wrapped elements are added and removed to the DOM-->
-    <!-- disabled transition by css -->
-    <transition
-      :css="false"
-      name="para"
-      @before-enter="beforeEnter"
-      @enter="enter"
-      @before-leave="beforeLeave"
-      @after-enter="afterEnter"
-      @leave="leave"
-      @after-leave="afterLeave"
-      @enter-cancelled="enterCancel"
-      @leave-cancelled="leaveCancel"
-    >
-      <p v-if="paraIsVisible">This is only sometimes visible</p>
-    </transition>
-
-    <button @click="togglePara">
-      Toggle paragraph
-    </button>
-  </div>
-  <div class="container">
-    <!-- transition by css -->
-    <!-- active only one button at same time -->
+  <!-- Animating routes -->
+  <router-view v-slot="slotProps">
+    <!-- Switch between two components : AllUsers and CourseGoals -->
+    <!-- out-in :leaving component is animated and then entering component is animated -->
     <transition name="fade-button" mode="out-in">
-      <button @click="showUsers" v-if="!usersAreVisible">Show users</button>
-      <button @click="hideUsers" v-else>Hide users</button>
+      <!-- dynamic component component  -->
+      <component :is="slotProps.Component"> </component>
     </transition>
-  </div>
-  <base-modal @close="hideDialog" :open="dialogIsVisible">
-    <p>This is a test dialog!</p>
-    <button @click="hideDialog">Close it!</button>
-  </base-modal>
-  <div class="container">
-    <button @click="showDialog">Show Dialog</button>
-  </div>
+  </router-view>
 </template>
 
 <script>
-import UserList from './components/UserList.vue';
 export default {
-  components: { UserList },
   data() {
     return {
       dialogIsVisible: false,
@@ -202,6 +164,16 @@ button:active {
 .fade-button-enter-to,
 .fade-button-leave-from {
   opacity: 1;
+}
+.route-enter-from {
+}
+.route-enter-active {
+  animation: slide-scale 0.4s ease-out;
+}
+.route-enter-to {
+}
+.route-leave-active {
+  animation: slide-scale 0.4s ease-in;
 }
 /* animation */
 @keyframes slide-scale {
