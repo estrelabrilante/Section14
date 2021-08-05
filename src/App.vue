@@ -6,7 +6,9 @@
   </div>
   <div class="container">
     <!-- transition events are emitted when wrapped elements are added and removed to the DOM-->
+    <!-- disabled transition by css -->
     <transition
+      :css="false"
       name="para"
       @before-enter="beforeEnter"
       @enter="enter"
@@ -25,6 +27,7 @@
     </button>
   </div>
   <div class="container">
+    <!-- transition by css -->
     <transition name="fade-button" mode="out-in">
       <button @click="showUsers" v-if="!usersAreVisible">Show users</button>
       <button @click="hideUsers" v-else>Hide users</button>
