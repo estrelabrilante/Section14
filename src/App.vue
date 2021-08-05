@@ -1,5 +1,8 @@
 <template>
   <div class="container">
+    <user-list></user-list>
+  </div>
+  <div class="container">
     <!-- animate class will be added whenever animatedBlock is true -->
     <div class="block" :class="{ animate: animatedBlock }"></div>
     <button @click="animateBlock">Animate</button>
@@ -28,6 +31,7 @@
   </div>
   <div class="container">
     <!-- transition by css -->
+    <!-- active only one button at same time -->
     <transition name="fade-button" mode="out-in">
       <button @click="showUsers" v-if="!usersAreVisible">Show users</button>
       <button @click="hideUsers" v-else>Hide users</button>
@@ -43,7 +47,9 @@
 </template>
 
 <script>
+import UserList from './components/UserList.vue';
 export default {
+  components: { UserList },
   data() {
     return {
       dialogIsVisible: false,
