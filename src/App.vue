@@ -5,6 +5,7 @@
     <button @click="animateBlock">Animate</button>
   </div>
   <div class="container">
+    <!-- transition events are emitted when wrapped elements are added and removed to the DOM-->
     <transition
       name="para"
       @before-enter="beforeEnter"
@@ -13,6 +14,8 @@
       @after-enter="afterEnter"
       @leave="leave"
       @after-leave="afterLeave"
+      @enter-cancelled="enterCancel"
+      @leave-cancelled="leaveCancel"
     >
       <p v-if="paraIsVisible">This is only sometimes visible</p>
     </transition>
@@ -43,10 +46,20 @@ export default {
       dialogIsVisible: false,
       animatedBlock: false,
       paraIsVisible: false,
-      usersAreVisible: false
+      usersAreVisible: false,
+      enterInterval: null,
+      leaveInterval: null
     };
   },
   methods: {
+    enterCancel(el) {
+      console.log(el);
+      clearInterval(this.enterInterval);
+    },
+    leaveCancel(el) {
+      console.log(el);
+      clearInterval(this.leaveInterval);
+    },
     animateBlock() {
       this.animatedBlock = true;
     },
@@ -62,9 +75,22 @@ export default {
     beforeEnter(el) {
       console.log('beforeEnter');
       console.log(el);
+      // INITIAL ANIMATION
+      el.style.opacity = 0;
     },
-    enter() {
+    // animation with javascript instead of css
+    enter(el, done) {
       console.log('Enter');
+      console.log(el);
+      let round = 1;
+      this.enterInterval = setInterval(() => {
+        el.style.opacity = round * 0.01;
+        round++;
+        if (round > 100) {
+          clearInterval(this.enterInterval);
+          done();
+        }
+      }, 20);
     },
     afterEnter(el) {
       console.log('afterEnter');
@@ -74,10 +100,21 @@ export default {
     beforeLeave(el) {
       console.log('beforeLeave');
       console.log(el);
+      el.style.opacity = 1;
     },
-    leave() {
+    leave(el, done) {
       console.log('leave');
+      let round = 1;
+      this.leaveInterval = setInterval(() => {
+        el.style.opacity = 1 - round * 0.01;
+        round++;
+        if (round > 100) {
+          clearInterval(this.leaveInterval);
+          done();
+        }
+      }, 20);
     },
+
     afterLeave() {
       console.log('afterLeave');
     },
@@ -140,34 +177,7 @@ button:active {
   /* transform: translateX(-50px); */
   animation: slide-fade 0.3s ease-out forwards;
 }
-.para-enter-from {
-  /* opacity: 0;
-  transform: translateY(-30px); */
-}
 
-.para-enter-active {
-  /* transition: all 0.3s ease-out; */
-  animation: slide-scale 0.3s ease-out;
-}
-
-.para-enter-to {
-  /* opacity: 1;
-  transform: translateY(0); */
-}
-.para-leave-from {
-  /* opacity: 1;
-  transform: translateY(0); */
-}
-
-.para-leave-active {
-  /* transition: all 0.3s ease-in; */
-  animation: slide-scale 0.3s ease-out;
-}
-
-.para-leave-to {
-  /* opacity: 0;
-  transform: translateY(30px); */
-}
 .fade-button-enter-from,
 .fade-button-leave-to {
   opacity: 0;
